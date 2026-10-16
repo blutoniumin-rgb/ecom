@@ -311,7 +311,8 @@ function previewSources(value: string): string[] {
       (item) =>
         item.startsWith("https://") ||
         item.startsWith("http://") ||
-        item.startsWith("/uploads/products/"),
+        item.startsWith("/uploads/products/") ||
+        /^\/api\/media\/[0-9a-f-]{36}$/i.test(item),
     );
 }
 

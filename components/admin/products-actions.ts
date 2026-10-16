@@ -44,7 +44,10 @@ function isHttpUrl(value: string): boolean {
 }
 
 function isUploadedProductImage(value: string): boolean {
-  return /^\/uploads\/products\/[A-Za-z0-9][A-Za-z0-9._-]{0,180}$/.test(value);
+  return (
+    /^\/uploads\/products\/[A-Za-z0-9][A-Za-z0-9._-]{0,180}$/.test(value) ||
+    /^\/api\/media\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+  );
 }
 
 function refreshProductViews(slugs: string[]) {
