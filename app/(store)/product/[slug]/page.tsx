@@ -123,7 +123,7 @@ async function ProductDetail({ params }: { params: Promise<{ slug: string }> }) 
           <h2 className="text-lg font-extrabold text-ink">More in {product.category.name}</h2>
           <div className="mt-4 grid min-w-0 grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
             {related.map((item) => (
-              <ProductCard key={item.id} product={item} wished={wishlist.includes(item.id)} />
+              <ProductCard key={item.id} product={item} />
             ))}
           </div>
         </section>

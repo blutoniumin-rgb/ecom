@@ -38,7 +38,7 @@ export function AddToCartButton({
         }}
         className={
           compact
-            ? "w-full rounded-full bg-ink px-3 py-2 text-center text-xs font-semibold text-white disabled:opacity-50"
+            ? "block w-full max-w-full overflow-hidden rounded-full bg-ink px-3 py-2 text-center text-xs font-semibold text-ellipsis whitespace-nowrap text-white disabled:opacity-50"
             : "rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white disabled:opacity-50"
         }
       >

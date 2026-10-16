@@ -2,13 +2,13 @@ import { Suspense } from "react";
 import { getCartCount } from "@/lib/cart";
 import { prisma } from "@/lib/prisma";
 import { StoreFooter } from "@/components/store/store-footer";
-import { StoreHeader } from "@/components/store/store-header";
+import { StoreHeader, StoreHeaderFallback } from "@/components/store/store-header";
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-white text-ink">
       <div className="mx-auto w-full max-w-[1180px] flex-1 px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
-        <Suspense fallback={<StoreHeader count={0} />}>
+        <Suspense fallback={<StoreHeaderFallback count={0} />}>
           <CartHeader />
         </Suspense>
         {children}

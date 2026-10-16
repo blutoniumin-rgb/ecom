@@ -1,14 +1,39 @@
 import Link from "next/link";
 import { SearchIcon } from "@/components/store/icons";
+import { getSession } from "@/lib/auth";
 
-export function StoreHeader({
+export async function StoreHeader({
   count,
   categories = [],
 }: {
   count: number;
   categories?: { name: string; slug: string }[];
 }) {
+  const session = await getSession();
+  return <StoreHeaderView count={count} categories={categories} signedIn={session !== null} />;
+}
+
+export function StoreHeaderFallback({
+  count,
+  categories = [],
+}: {
+  count: number;
+  categories?: { name: string; slug: string }[];
+}) {
+  return <StoreHeaderView count={count} categories={categories} signedIn={false} />;
+}
+
+function StoreHeaderView({
+  count,
+  categories = [],
+  signedIn,
+}: {
+  count: number;
+  categories?: { name: string; slug: string }[];
+  signedIn: boolean;
+}) {
   const badge = count > 99 ? "99+" : String(count);
+  const accountHref = signedIn ? "/account" : "/login?next=/account";
 
   return (
     <header className="flex flex-wrap items-center gap-x-3 gap-y-3">
@@ -34,6 +59,13 @@ export function StoreHeader({
         </button>
       </form>
       <div className="ml-auto flex shrink-0 items-center gap-3">
+        <Link
+          href={accountHref}
+          aria-label="Account"
+          className="grid h-9 w-9 place-items-center text-ink"
+        >
+          <AccountIcon />
+        </Link>
         <Link
           href="/cart"
           aria-label={`Cart, ${count} items`}
@@ -62,6 +94,21 @@ export function StoreHeader({
         ))}
       </nav>
     </header>
+  );
+}
+
+function AccountIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="8" r="3.25" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M5.5 19.25v-.35a4.55 4.55 0 0 1 4.55-4.55h3.9a4.55 4.55 0 0 1 4.55 4.55v.35"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
 

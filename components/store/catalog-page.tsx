@@ -83,7 +83,7 @@ export async function CatalogPage({
           ) : (
             <div id="products" className="mt-5 grid min-w-0 grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
               {results.map((product) => (
-                <ProductCard key={product.id} product={product} wished={wished.has(product.id)} />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { ProductCard } from "@/components/store/product-card";
 import { PromoBanner } from "@/components/store/promo-banner";
-import { getWishlistIds } from "@/components/store/wishlist";
 
 const BLURBS: Record<string, string> = {
   "new-in": "Just in — the pieces we added this week.",
@@ -12,16 +11,13 @@ const BLURBS: Record<string, string> = {
 };
 
 export async function HomePage() {
-  const [categories, products, wishlist] = await Promise.all([
+  const [categories, products] = await Promise.all([
     prisma.category.findMany({ orderBy: { sortOrder: "asc" } }),
     prisma.product.findMany({
       where: { active: true },
       orderBy: { createdAt: "desc" },
     }),
-    getWishlistIds(),
   ]);
-
-  const wished = new Set(wishlist);
 
   return (
     <div className="mt-2">
@@ -68,7 +64,7 @@ export async function HomePage() {
               ) : (
                 <div className="mt-4 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                   {items.map((product) => (
-                    <ProductCard key={product.id} product={product} wished={wished.has(product.id)} />
+                    <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
               )}
