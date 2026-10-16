@@ -19,10 +19,10 @@ export function ProductCard({
   const size = splitTokens(product.sizes)[0] ?? "";
 
   return (
-    <article className="flex min-w-0 flex-col">
-      <Link href={`/product/${product.slug}`} className="block overflow-hidden rounded-[22px] bg-[#f2f2f2]">
+    <article className="group flex min-w-0 flex-col">
+      <Link href={`/product/${product.slug}`} className="block overflow-hidden rounded-[22px] bg-[#f2f2f2] transition-[transform,box-shadow] duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-[0_4px_8px_-2px_rgba(17,17,17,0.08),0_16px_32px_-8px_rgba(17,17,17,0.18),0_28px_48px_-16px_rgba(255,122,61,0.28)] motion-reduce:transition-none">
         {image ? (
-          <img src={image} alt={product.name} className="aspect-[3/4] w-full object-cover" />
+          <img src={image} alt={product.name} className="aspect-[3/4] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none" />
         ) : (
           <div className="aspect-[3/4] w-full" />
         )}

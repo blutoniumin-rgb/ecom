@@ -13,9 +13,8 @@ import {
   uniqueSizes,
   type CatalogQuery,
 } from "@/components/store/catalog-query";
-import { ChevronIcon, HouseIcon, LightningIcon } from "@/components/store/icons";
+import { ChevronIcon, LightningIcon } from "@/components/store/icons";
 import { firstImage, ProductCard } from "@/components/store/product-card";
-import { PromoBanner } from "@/components/store/promo-banner";
 import { getWishlistIds } from "@/components/store/wishlist";
 
 const RAIL = [
@@ -64,8 +63,7 @@ export async function CatalogPage({
 
   return (
     <div className="mt-4">
-      <PromoBanner />
-      <div className="mt-6 flex flex-col gap-5 md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6">
+      <div className="flex flex-col gap-5 md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6">
         <CategoryRail path={path} query={query} activeSlug={query.category} thumbs={thumbs} />
         <section className="min-w-0">
           <div className="flex items-end justify-between gap-3">
@@ -109,19 +107,6 @@ function CategoryRail({
       aria-label="Categories"
       className="flex gap-2 overflow-x-auto pb-1 md:flex-col md:overflow-visible md:pb-0"
     >
-      <Link
-        href="/"
-        className={`flex shrink-0 items-center justify-between gap-3 rounded-2xl px-4 py-3 text-xs font-bold tracking-[0.16em] whitespace-nowrap text-ink md:shrink ${
-          path === "/" && !query.q && !query.size && !query.color && !query.style && !query.type
-            ? "bg-[#f3f3f4] ring-2 ring-ink"
-            : "bg-[#f3f3f4]"
-        }`}
-      >
-        HOME
-        <span className="grid h-7 w-7 place-items-center rounded-full bg-white">
-          <HouseIcon />
-        </span>
-      </Link>
       {RAIL.map((item) => {
         const active = activeSlug === item.slug;
         const href = catalogHref(path, query, { category: item.slug }, "/shop");
@@ -363,7 +348,6 @@ function PriceForm({ path, query }: { path: "/" | "/shop"; query: CatalogQuery }
 export function CatalogFallback() {
   return (
     <div className="mt-5 space-y-4">
-      <div className="h-40 rounded-[28px] bg-[#ffb7e6]/70" />
       <div className="flex flex-col gap-4 md:grid md:grid-cols-[220px_minmax(0,1fr)]">
         <div className="h-14 rounded-3xl bg-[#f3f3f4] md:h-64" />
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">

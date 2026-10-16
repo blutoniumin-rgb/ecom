@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { ProductCard } from "@/components/store/product-card";
-import { PromoBanner } from "@/components/store/promo-banner";
+import { HeroSlider } from "@/components/store/hero-slider";
 
 const BLURBS: Record<string, string> = {
   "new-in": "Just in — the pieces we added this week.",
@@ -21,23 +21,7 @@ export async function HomePage() {
 
   return (
     <div className="mt-2">
-      <section className="mt-5 overflow-hidden rounded-3xl bg-ink px-6 py-8 text-white sm:px-10 sm:py-12">
-        <p className="text-xs font-bold tracking-[0.22em] text-accent uppercase">Wearism India</p>
-        <h1 className="mt-3 max-w-xl text-3xl font-extrabold tracking-tight sm:text-5xl">
-          Everyday fashion, priced in rupees.
-        </h1>
-        <p className="mt-3 max-w-md text-sm leading-relaxed text-white/75">
-          Coats, tops, and knitwear from the latest edit. Shop by category, or browse the full catalog.
-        </p>
-        <Link
-          href="/shop"
-          className="mt-6 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-ink"
-        >
-          Shop all
-        </Link>
-      </section>
-
-      <PromoBanner />
+      <HeroSlider />
 
       <div className="mt-10 space-y-12">
         {categories.map((category) => {

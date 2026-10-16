@@ -46,6 +46,10 @@ function isHttpUrl(value: string): boolean {
   }
 }
 
+function isUploadedProductImage(value: string): boolean {
+  return /^\/uploads\/products\/[A-Za-z0-9][A-Za-z0-9._-]{0,180}$/.test(value);
+}
+
 function refreshProductViews(slugs: string[]) {
   revalidatePath("/admin");
   revalidatePath("/admin/products");
@@ -114,8 +118,8 @@ export async function saveProduct(
 
   const urls = parseImageList(imageRaw);
   if (urls.length > 8) return { error: "Add up to 8 image URLs." };
-  if (urls.some((url) => url.length > 2000 || !isHttpUrl(url))) {
-    return { error: "Each image must be an http or https URL." };
+  if (urls.some((url) => url.length > 2000 || (!isHttpUrl(url) && !isUploadedProductImage(url)))) {
+    return { error: "Each image must be an http or https URL, or an uploaded product image." };
   }
 
   const category = await prisma.category.findUnique({

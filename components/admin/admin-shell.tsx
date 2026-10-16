@@ -64,12 +64,6 @@ export function AdminShell({
               icon={<BoxIcon />}
             />
             <NavItem
-              href="/admin"
-              label="Analytics"
-              active={false}
-              icon={<ChartIcon />}
-            />
-            <NavItem
               href="/admin/reports/gst"
               label="GST invoice"
               active={pathname === "/admin/reports/gst" || pathname.startsWith("/admin/reports/gst/")}
@@ -86,49 +80,25 @@ export function AdminShell({
               active={pathname === "/admin/settings" || pathname.startsWith("/admin/settings/")}
               icon={<GearIcon />}
             />
+            <li>
+              <form action="/api/auth/logout" method="post">
+                <button
+                  type="submit"
+                  className="flex h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-admin-ink/80 transition-colors hover:bg-admin-peach/70 hover:text-admin-accent"
+                >
+                  <span className="text-admin-muted">
+                    <LogoutIcon />
+                  </span>
+                  <span className="truncate">Log out</span>
+                </button>
+              </form>
+            </li>
           </ul>
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex h-[76px] items-center gap-4 bg-admin-bg px-6">
-          <form action="/admin/products" method="get" className="relative min-w-0 flex-1">
-            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-admin-muted">
-              <SearchIcon />
-            </span>
-            <input
-              type="search"
-              name="q"
-              placeholder="Search..."
-              aria-label="Search"
-              className="h-11 w-full rounded-full bg-white pr-4 pl-11 text-sm text-admin-ink ring-1 ring-black/[0.04] outline-none placeholder:text-admin-muted focus:ring-admin-accent/40"
-            />
-          </form>
-
-          <span
-            aria-hidden="true"
-            className="hidden h-9 shrink-0 items-center gap-1 rounded-lg bg-white px-2.5 text-xs font-medium text-admin-muted ring-1 ring-black/[0.06] sm:inline-flex"
-          >
-            <span className="text-sm leading-none">⌘</span>K
-          </span>
-
-          <span className="ml-auto flex items-center gap-2">
-            <span
-              aria-hidden="true"
-              className="relative grid size-10 place-items-center rounded-full bg-white text-admin-ink ring-1 ring-black/[0.04]"
-            >
-              <MailIcon />
-              <span className="absolute top-2 right-2 size-2 rounded-full bg-admin-accent" />
-            </span>
-            <span
-              aria-hidden="true"
-              className="relative grid size-10 place-items-center rounded-full bg-white text-admin-ink ring-1 ring-black/[0.04]"
-            >
-              <BellIcon />
-              <span className="absolute top-2 right-2 size-2 rounded-full bg-admin-accent" />
-            </span>
-          </span>
-
+        <header className="sticky top-0 z-10 flex h-[76px] items-center justify-end gap-4 bg-admin-bg px-6">
           <div className="flex items-center gap-3 pl-1">
             <span className="grid size-10 place-items-center rounded-full bg-admin-peach text-sm font-semibold text-admin-accent">
               {initials(adminName)}
@@ -206,15 +176,6 @@ function BagIcon() {
   );
 }
 
-function SearchIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="11" cy="11" r="6.25" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M16 16.5 20 20.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function GridIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -256,14 +217,6 @@ function BoxIcon() {
   );
 }
 
-function ChartIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M5 19V10M12 19V5M19 19v-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function InvoiceIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -287,25 +240,12 @@ function GearIcon() {
   );
 }
 
-function MailIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" />
-      <path d="m5 8 7 5 7-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
-function BellIcon() {
+function LogoutIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M6.5 16.5h11l-1.1-1.6V10a4.4 4.4 0 0 0-8.8 0v4.9L6.5 16.5Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-      <path d="M10 18.5a2 2 0 0 0 4 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M10 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M15 8l4 4-4 4M19 12H9.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

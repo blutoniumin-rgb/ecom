@@ -5,7 +5,8 @@
   --panel: #ffffff;
   --ink: #111111;
   --line: #111111;
-  --accent: #b9a3f5;
+  --accent: #ff7a3d;
+  --accent-soft: #fff1ea;
   --muted: #5c5c5c;
 
   --admin-bg: #f3f4f6;
@@ -23,6 +24,7 @@
   --color-ink: var(--ink);
   --color-line: var(--line);
   --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
   --color-muted: var(--muted);
   --color-admin-bg: var(--admin-bg);
   --color-admin-sidebar: var(--admin-sidebar);

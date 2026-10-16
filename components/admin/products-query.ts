@@ -178,7 +178,9 @@ export function firstProductImage(imageUrls: string): string | null {
 
 export function safeHttpImage(url: string | null): string | null {
   if (!url) return null;
-  return url.startsWith("https://") || url.startsWith("http://") ? url : null;
+  if (url.startsWith("https://") || url.startsWith("http://")) return url;
+  if (/^\/uploads\/products\/[A-Za-z0-9][A-Za-z0-9._-]{0,180}$/.test(url)) return url;
+  return null;
 }
 
 export function optionLabel(
