@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --canvas: #ffd1ea;
+  --canvas: #ffffff;
   --panel: #ffffff;
   --ink: #111111;
   --line: #111111;
