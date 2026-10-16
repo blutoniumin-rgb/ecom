@@ -1,13 +1,11 @@
 import Link from "next/link";
-import { HeartIcon, SearchIcon } from "@/components/store/icons";
+import { SearchIcon } from "@/components/store/icons";
 
 export function StoreHeader({
   count,
-  saved,
   categories = [],
 }: {
   count: number;
-  saved?: boolean;
   categories?: { name: string; slug: string }[];
 }) {
   const badge = count > 99 ? "99+" : String(count);
@@ -36,17 +34,18 @@ export function StoreHeader({
         </button>
       </form>
       <div className="ml-auto flex shrink-0 items-center gap-3">
-        <Link href="/shop?saved=1" aria-label="Wishlist" className="text-ink">
-          <HeartIcon filled={Boolean(saved)} />
-        </Link>
         <Link
           href="/cart"
           aria-label={`Cart, ${count} items`}
-          className="grid h-8 min-w-8 place-items-center rounded-full bg-ink px-2 text-xs font-bold text-white"
+          className="relative grid h-9 w-9 place-items-center text-ink"
         >
-          {badge}
+          <BagIcon />
+          {count > 0 ? (
+            <span className="absolute -top-0.5 -right-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-ink px-1 text-[10px] font-bold leading-none text-white">
+              {badge}
+            </span>
+          ) : null}
         </Link>
-        <span className="text-xs font-bold tracking-wide text-ink">IN</span>
       </div>
       <nav aria-label="Store" className="-mx-1 flex w-full gap-1 overflow-x-auto pb-1">
         <Link href="/" className="shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold text-ink hover:bg-[#f3f3f4]">
@@ -63,5 +62,26 @@ export function StoreHeader({
         ))}
       </nav>
     </header>
+  );
+}
+
+function BagIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M6.4 8h11.2l-.85 12.1a1 1 0 0 1-1 .9H8.25a1 1 0 0 1-1-.9L6.4 8Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9 8V6.6a3 3 0 0 1 6 0V8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }

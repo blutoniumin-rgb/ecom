@@ -3,7 +3,6 @@ import { getCartCount } from "@/lib/cart";
 import { prisma } from "@/lib/prisma";
 import { StoreFooter } from "@/components/store/store-footer";
 import { StoreHeader } from "@/components/store/store-header";
-import { getWishlistIds } from "@/components/store/wishlist";
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,12 +21,11 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
 }
 
 async function CartHeader() {
-  const [count, wishlist, categories] = await Promise.all([
+  const [count, categories] = await Promise.all([
     getCartCount(),
-    getWishlistIds(),
     prisma.category.findMany({ orderBy: { sortOrder: "asc" }, select: { name: true, slug: true } }),
   ]);
-  return <StoreHeader count={count} saved={wishlist.length > 0} categories={categories} />;
+  return <StoreHeader count={count} categories={categories} />;
 }
 
 async function StoreFooterSlot() {
