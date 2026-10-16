@@ -50,6 +50,7 @@ async function main() {
     orders,
     orderItems,
     shipments,
+    images,
   ] = await Promise.all([
     sqlite.storeSetting.findMany(),
     sqlite.user.findMany(),
@@ -63,6 +64,7 @@ async function main() {
     sqlite.order.findMany(),
     sqlite.orderItem.findMany(),
     sqlite.shipment.findMany(),
+    sqlite.storedImage.findMany(),
   ]);
 
   console.log("Replacing Neon rows with the SQLite snapshot. prisma/dev.db is left unchanged.");
@@ -81,6 +83,7 @@ async function main() {
       await tx.category.deleteMany();
       await tx.user.deleteMany();
       await tx.storeSetting.deleteMany();
+      await tx.storedImage.deleteMany();
 
       if (settings.length) await tx.storeSetting.createMany({ data: settings });
       if (users.length) await tx.user.createMany({ data: users });
@@ -94,6 +97,7 @@ async function main() {
       if (orders.length) await tx.order.createMany({ data: orders });
       if (orderItems.length) await tx.orderItem.createMany({ data: orderItems });
       if (shipments.length) await tx.shipment.createMany({ data: shipments });
+      if (images.length) await tx.storedImage.createMany({ data: images });
     },
     { timeout: 60_000 },
   );
@@ -116,6 +120,7 @@ async function main() {
   console.log(`Orders: ${orders.length}`);
   console.log(`Order items: ${orderItems.length}`);
   console.log(`Shipments: ${shipments.length}`);
+  console.log(`Uploaded images: ${images.length}`);
 }
 
 main()

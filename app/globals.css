@@ -39,3 +39,26 @@ body {
   color: #171717;
   font-family: var(--font-sans);
 }
+
+@keyframes wearism-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.wearism-spin {
+  animation: wearism-spin 0.7s linear infinite;
+}
+
+@keyframes wearism-progress {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(420%);
+  }
+}
+
+.wearism-progress {
+  animation: wearism-progress 1s ease-in-out infinite;
+}

@@ -347,14 +347,10 @@ function PriceForm({ path, query }: { path: "/" | "/shop"; query: CatalogQuery }
 
 export function CatalogFallback() {
   return (
-    <div className="mt-5 space-y-4">
-      <div className="flex flex-col gap-4 md:grid md:grid-cols-[220px_minmax(0,1fr)]">
-        <div className="h-14 rounded-3xl bg-[#f3f3f4] md:h-64" />
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 4 }, (_, index) => (
-            <div key={index} className="aspect-[3/4] rounded-[22px] bg-[#f2f2f2]" />
-          ))}
-        </div>
+    <div className="relative mt-5">
+      <div className="flex min-h-[42vh] flex-col items-center justify-center gap-4" role="status" aria-live="polite">
+        <span className="wearism-spin h-10 w-10 rounded-full border-[3px] border-[#ececee] border-t-ink" />
+        <p className="text-sm font-semibold text-muted">Loading the shop</p>
       </div>
     </div>
   );

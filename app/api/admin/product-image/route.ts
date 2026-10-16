@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { connection } from "next/server";
 import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { ensureStoredImages } from "@/lib/stored-image";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -10,8 +10,10 @@ function json(body: unknown, status = 200) {
   return Response.json(body, { status });
 }
 
-function imageExtension(bytes: Uint8Array): "jpg" | "png" | "webp" | "gif" | null {
-  if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpg";
+function imageType(bytes: Uint8Array): { extension: "jpg" | "png" | "webp" | "gif"; mime: string } | null {
+  if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+    return { extension: "jpg", mime: "image/jpeg" };
+  }
   if (
     bytes.length >= 8 &&
     bytes[0] === 0x89 &&
@@ -23,7 +25,7 @@ function imageExtension(bytes: Uint8Array): "jpg" | "png" | "webp" | "gif" | nul
     bytes[6] === 0x1a &&
     bytes[7] === 0x0a
   ) {
-    return "png";
+    return { extension: "png", mime: "image/png" };
   }
   if (
     bytes.length >= 6 &&
@@ -34,7 +36,7 @@ function imageExtension(bytes: Uint8Array): "jpg" | "png" | "webp" | "gif" | nul
     (bytes[4] === 0x37 || bytes[4] === 0x39) &&
     bytes[5] === 0x61
   ) {
-    return "gif";
+    return { extension: "gif", mime: "image/gif" };
   }
   if (
     bytes.length >= 12 &&
@@ -47,7 +49,7 @@ function imageExtension(bytes: Uint8Array): "jpg" | "png" | "webp" | "gif" | nul
     bytes[10] === 0x42 &&
     bytes[11] === 0x50
   ) {
-    return "webp";
+    return { extension: "webp", mime: "image/webp" };
   }
   return null;
 }
@@ -80,15 +82,20 @@ export async function POST(request: Request) {
     return json({ error: "Each image must be 5 MB or smaller." }, 400);
   }
 
-  const extension = imageExtension(bytes);
-  if (!extension) {
+  const type = imageType(bytes);
+  if (!type) {
     return json({ error: "Upload a JPEG, PNG, WebP, or GIF image." }, 400);
   }
 
-  const filename = `${randomUUID()}.${extension}`;
-  const directory = path.join(process.cwd(), "public", "uploads", "products");
-  await mkdir(directory, { recursive: true });
-  await writeFile(path.join(directory, filename), bytes);
+  const id = randomUUID();
+  await ensureStoredImages();
+  await prisma.storedImage.create({
+    data: {
+      id,
+      mime: type.mime,
+      data: Buffer.from(bytes),
+    },
+  });
 
-  return json({ path: `/uploads/products/${filename}` });
+  return json({ path: `/api/media/${id}` });
 }

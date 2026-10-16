@@ -43,7 +43,7 @@ npm run db:copy-to-neon
 npm run dev:neon
 ```
 
-`db:copy-to-neon` reads `prisma/dev.db` and replaces the Neon tables with that snapshot. It does not modify the SQLite file. Product images in the database are URL strings, so they move with each product row. Admin uploads still write to `public/uploads` on local disk; that folder is not durable on Vercel.
+`db:copy-to-neon` reads `prisma/dev.db` and replaces the Neon tables with that snapshot. It does not modify the SQLite file. Product images in the database are URL strings, so they move with each product row. Admin uploads are stored in the `StoredImage` table and served from `/api/media/[id]`, so they work on Vercel as well as locally. Apply `npm run db:migrate:neon` after pulling this change so the table exists before the first upload. The upload route also creates the table if it is missing.
 
 `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` are optional. Both must be set for live Razorpay checkout. Keys stay in the environment; admin settings only show whether the key id is set.
 

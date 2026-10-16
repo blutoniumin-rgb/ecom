@@ -159,3 +159,10 @@ model StoreSetting {
   gstLowRate   Int    @default(5)
   gstHighRate  Int    @default(12)
 }
+
+model StoredImage {
+  id        String   @id
+  mime      String
+  data      Bytes
+  createdAt DateTime @default(now())
+}

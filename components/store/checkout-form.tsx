@@ -100,13 +100,14 @@ export function CheckoutForm({
   const [addressChoice, setAddressChoice] = useState(initialAddress);
   const [payment, setPayment] = useState<"cod" | "online">("cod");
   const [error, setError] = useState<string | null>(blocked);
-  const [pending, setPending] = useState(false);
+  const [phase, setPhase] = useState<"idle" | "placing" | "paying" | "confirming">("idle");
+  const pending = phase !== "idle";
 
   async function confirmRazorpay(checkout: RazorpayCheckout) {
     const loaded = await loadRazorpay();
     if (!loaded || !window.Razorpay) {
       setError("Razorpay checkout could not be loaded.");
-      setPending(false);
+      setPhase("idle");
       return;
     }
 
@@ -122,11 +123,12 @@ export function CheckoutForm({
       theme: { color: "#111111" },
       modal: {
         ondismiss: () => {
-          setPending(false);
+          setPhase("idle");
           setError("Payment was not completed. Your bag is unchanged.");
         },
       },
       handler: (response) => {
+        setPhase("confirming");
         void (async () => {
           try {
             const verify = await fetch("/api/razorpay/verify", {
@@ -141,13 +143,13 @@ export function CheckoutForm({
             });
             const payload = (await verify.json().catch(() => null)) as { error?: string; orderId?: string } | null;
             if (!verify.ok || !payload?.orderId) {
-              setPending(false);
+              setPhase("idle");
               setError(payload?.error || "Payment could not be confirmed.");
               return;
             }
             window.location.assign(`/order/${payload.orderId}`);
           } catch {
-            setPending(false);
+            setPhase("idle");
             setError("Payment could not be confirmed.");
           }
         })();
@@ -155,8 +157,9 @@ export function CheckoutForm({
     });
     try {
       instance.open();
+      setPhase("paying");
     } catch {
-      setPending(false);
+      setPhase("idle");
       setError("Razorpay checkout could not be opened.");
     }
   }
@@ -164,7 +167,7 @@ export function CheckoutForm({
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (blocked) return;
-    setPending(true);
+    setPhase("placing");
     setError(null);
 
     const form = new FormData(event.currentTarget);
@@ -198,7 +201,7 @@ export function CheckoutForm({
       | null;
 
     if (!response.ok || !payload || payload.error) {
-      setPending(false);
+      setPhase("idle");
       setError(payload?.error || "Checkout could not be completed.");
       return;
     }
@@ -213,7 +216,7 @@ export function CheckoutForm({
       return;
     }
 
-    setPending(false);
+    setPhase("idle");
     setError("Checkout could not be completed.");
   }
 
@@ -387,11 +390,27 @@ export function CheckoutForm({
         <button
           type="submit"
           disabled={pending || Boolean(blocked)}
-          className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-bold text-white disabled:opacity-50"
+          className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-bold text-white disabled:opacity-50"
         >
-          {pending ? "Placing order…" : payLabel}
+          {pending ? <span className="wearism-spin h-4 w-4 rounded-full border-2 border-white/30 border-t-white" /> : null}
+          {phase === "confirming" ? "Confirming payment" : phase === "paying" ? "Waiting for payment" : pending ? "Please wait" : payLabel}
         </button>
       </aside>
+      {phase === "placing" || phase === "confirming" ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-white/80 px-6 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4 text-center" role="status" aria-live="polite">
+            <span className="wearism-spin h-11 w-11 rounded-full border-[3px] border-[#ececee] border-t-ink" />
+            <p className="text-base font-bold text-ink">
+              {phase === "confirming" ? "Confirming payment" : "Placing your order"}
+            </p>
+            <p className="max-w-xs text-sm text-muted">
+              {phase === "confirming"
+                ? "Payment is in. You’ll land on your order in a moment."
+                : "This takes a moment. You’ll see your order as soon as it’s ready."}
+            </p>
+          </div>
+        </div>
+      ) : null}
     </form>
   );
 }
