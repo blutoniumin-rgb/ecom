@@ -2,23 +2,32 @@
   "name": "demo-project-ecom",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "dev:neon": "tsx scripts/with-neon-env.ts next dev",
+    "build": "node scripts/generate-postgres-client.mjs && next build",
     "start": "next start",
     "lint": "eslint",
     "db:seed": "tsx prisma/seed.ts",
-    "postinstall": "prisma generate"
+    "db:migrate:neon": "tsx scripts/with-neon-env.ts prisma migrate deploy --schema prisma/postgres/schema.prisma",
+    "db:copy-to-neon": "tsx scripts/copy-sqlite-to-neon.ts",
+    "postinstall": "node scripts/generate-postgres-client.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "@prisma/adapter-neon": "^6.19.3",
     "@prisma/client": "^6.19.3",
     "bcryptjs": "^3.0.3",
     "next": "16.4.2",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "ws": "^8.22.0"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
@@ -26,6 +35,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/ws": "^8.18.2",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
     "prisma": "^6.19.3",

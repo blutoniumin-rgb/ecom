@@ -38,6 +38,9 @@ yarn-error.log*
 /prisma/*.db
 /prisma/*.db-journal
 
+# prisma generate output (rebuilt in postinstall and on Vercel)
+/generated/
+
 # vercel
 .vercel
 

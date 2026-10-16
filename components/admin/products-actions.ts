@@ -1,9 +1,8 @@
 "use server";
 
-import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { isPrismaError, prisma } from "@/lib/prisma";
 import {
   normalizeTokenList,
   parseImageList,
@@ -13,9 +12,7 @@ import {
 } from "@/components/admin/products-query";
 
 function uniqueConflict(error: unknown): string | null {
-  if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== "P2002") {
-    return null;
-  }
+  if (!isPrismaError(error, "P2002")) return null;
   const target = error.meta?.target;
   const fields = Array.isArray(target) ? target.join(",") : String(target ?? "");
   if (fields.includes("sku")) return "That SKU is already in use.";
@@ -74,7 +71,7 @@ export async function setProductActive(formData: FormData) {
     refreshProductViews([product.slug]);
     revalidatePath(`/admin/products/${id}`);
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") return;
+    if (isPrismaError(error, "P2025")) return;
     throw error;
   }
 }
@@ -171,7 +168,7 @@ export async function saveProduct(
   } catch (error) {
     const message = uniqueConflict(error);
     if (message) return { error: message };
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+    if (isPrismaError(error, "P2025")) {
       return { error: "This product no longer exists." };
     }
     throw error;

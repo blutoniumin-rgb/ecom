@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { gstAmount, gstRateForPrice, type GstBands } from "../lib/gst";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma";
 
 const bands: GstBands = {
   gstThreshold: 1000,

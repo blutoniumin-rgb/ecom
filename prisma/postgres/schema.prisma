@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma/neon-client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String               @id @default(cuid())
+  name         String
+  email        String               @unique
+  phone        String?
+  passwordHash String
+  role         String
+  createdAt    DateTime             @default(now())
+  addresses    Address[]
+  resetTokens  PasswordResetToken[]
+  reviews      Review[]
+  cart         Cart?
+  orders       Order[]
+}
+
+model Address {
+  id         String  @id @default(cuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  phone      String
+  line1      String
+  line2      String?
+  city       String
+  state      String
+  postalCode String
+  isDefault  Boolean @default(false)
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String
+  expiresAt DateTime
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  sortOrder Int
+  products  Product[]
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String      @unique
+  sku         String      @unique
+  description String
+  price       Int
+  mrp         Int
+  stock       Int
+  active      Boolean     @default(true)
+  sizes       String
+  colors      String
+  imageUrls   String
+  categoryId  String
+  category    Category    @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime    @default(now())
+  reviews     Review[]
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  authorName String
+  rating     Int
+  body       String
+  createdAt  DateTime @default(now())
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String?    @unique
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guestKey  String?    @unique
+  updatedAt DateTime   @updatedAt
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  size      String
+  quantity  Int
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  userId         String
+  user           User        @relation(fields: [userId], references: [id])
+  status         String
+  paymentMethod  String
+  paymentStatus  String
+  subtotal       Int
+  gst            Int
+  total          Int
+  addressName    String
+  addressPhone   String
+  addressLine1   String
+  addressLine2   String?
+  addressCity    String
+  addressState   String
+  addressPostal  String
+  createdAt      DateTime    @default(now())
+  items          OrderItem[]
+  shipment       Shipment?
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  name      String
+  sku       String
+  unitPrice Int
+  quantity  Int
+  gstRate   Int
+  gstAmount Int
+}
+
+model Shipment {
+  id             String @id @default(cuid())
+  orderId        String @unique
+  order          Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  carrier        String
+  trackingNumber String
+  events         String
+}
+
+model StoreSetting {
+  id           String @id @default("singleton")
+  storeName    String
+  supportEmail String
+  gstThreshold Int    @default(1000)
+  gstLowRate   Int    @default(5)
+  gstHighRate  Int    @default(12)
+}

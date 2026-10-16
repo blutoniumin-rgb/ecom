@@ -1,6 +1,6 @@
 # Wearism
 
-Fashion storefront and admin for Wearism. The app is Next.js with a SQLite database through Prisma. Prices are integer rupees. GST is calculated from store settings (seeded at 5% for a unit price at or under ₹1000, and 12% above that).
+Fashion storefront and admin for Wearism. The app is Next.js with Prisma. Local development uses SQLite. Production on Vercel uses Neon Postgres. Prices are integer rupees. GST is calculated from store settings (seeded at 5% for a unit price at or under ₹1000, and 12% above that).
 
 ## Run locally
 
@@ -18,11 +18,32 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Environment
 
-Copy `.env.example`. The database URL must be:
+Copy `.env.example`. Local development keeps:
 
 ```
 DATABASE_URL="file:./dev.db"
 ```
+
+That file is `prisma/dev.db`. `npm run dev` uses it. A `postgres://` or `postgresql://` `DATABASE_URL` uses Neon through the serverless driver instead.
+
+### Neon and Vercel
+
+Create `.env.neon.local` (gitignored) with the production branch connection strings from the Neon console:
+
+```
+DATABASE_URL="postgresql://USER:PASSWORD@HOST-pooler.REGION.aws.neon.tech/neondb?sslmode=require"
+DIRECT_URL="postgresql://USER:PASSWORD@HOST.REGION.aws.neon.tech/neondb?sslmode=require"
+```
+
+`DATABASE_URL` is the pooled URL. `DIRECT_URL` is the direct URL. On Vercel, set both in the project environment. Apply the Postgres schema and copy the current SQLite rows (products, image URLs, users, and orders) once:
+
+```bash
+npm run db:migrate:neon
+npm run db:copy-to-neon
+npm run dev:neon
+```
+
+`db:copy-to-neon` reads `prisma/dev.db` and replaces the Neon tables with that snapshot. It does not modify the SQLite file. Product images in the database are URL strings, so they move with each product row. Admin uploads still write to `public/uploads` on local disk; that folder is not durable on Vercel.
 
 `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` are optional. Both must be set for live Razorpay checkout. Keys stay in the environment; admin settings only show whether the key id is set.
 
